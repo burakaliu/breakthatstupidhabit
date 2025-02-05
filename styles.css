@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: repeat(53, 15px); /* 53 weeks for extra day in the year*/
     gap: 2px;
-    width: fit-content;
+    width: 1000px;
     padding: 10px;
 }
 
