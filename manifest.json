@@ -6,5 +6,18 @@
     "action": {
       "default_popup": "hello.html",
       "default_icon": "hello_extension.png"
-    }
-  }
+    },
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      }
+    ],
+    "permissions": [
+      "storage",
+      "activeTab"
+    ]
+}
