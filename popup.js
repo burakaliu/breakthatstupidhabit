@@ -3,21 +3,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const today = new Date();
     const startDate = new Date();
-    startDate.setFullYear(today.getFullYear() - 1); // One year back
+    startDate.setFullYear(today.getFullYear() - 1); // starts from a year ago
 
     let dates = [];
     for (let d = new Date(startDate); d <= today; d.setDate(d.getDate() + 1)) {
-        dates.push(new Date(d)); // Store each day
+        dates.push(new Date(d)); // adds dates to array
     }
 
-    // Simulated productivity data (0-4 scale)
+    // fake data
     const productivityData = {};
     dates.forEach(date => {
         const dateString = date.toISOString().split("T")[0];
-        productivityData[dateString] = Math.floor(Math.random() * 5); // Random productivity levels
+        productivityData[dateString] = Math.floor(Math.random() * 5); 
     });
 
-    // Generate the heatmap
+    // generate heatmap
     dates.forEach(date => {
         const dayElement = document.createElement("div");
         dayElement.classList.add("day");
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const level = productivityData[dateString] || 0;
         dayElement.setAttribute("data-level", level);
 
-        dayElement.title = `${dateString}: ${level} productivity`; // Tooltip
+        dayElement.title = `${dateString}: productivity level ${level} `; // tooltip
 
         container.appendChild(dayElement);
     });
