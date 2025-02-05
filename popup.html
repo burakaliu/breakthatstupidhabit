@@ -10,12 +10,19 @@
     <h2>Website Tracker</h2>
     <p id="website">Loading...</p>
     <h3>Status: <span id="status">Loading...</span></h3>
-    
+
     <label class="switch">
         <input type="checkbox" id="toggleTracking">
         <span class="slider round"></span>
     </label>
     <p>Tracking <span id="trackingStatus">OFF</span></p>
+
+    <h3>Time Spent</h3>
+    <p>📚 Productive: <span id="productiveTime">0</span> sec</p>
+    <p>🚀 Distracting: <span id="distractingTime">0</span> sec</p>
+    <p>😐 Neutral: <span id="neutralTime">0</span> sec</p>
+
+    <button id="resetLog">Reset Log</button>
 
     <script src="popup.js"></script>
 </body>
