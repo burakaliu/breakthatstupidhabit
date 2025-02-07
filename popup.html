@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Break That Habit</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport">
+    <title>Break That Stupid Habit</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <h2>Website Tracker</h2>
+    <div id="content" class="website-list"></div>
+    <p id="website">Loading...</p>
+    <h3>Status: <span id="status">Loading...</span></h3>
+    
+    <label class="switch">
+        <input type="checkbox" id="toggleTracking">
+        <span class="slider round"></span>
+    </label>
+    <p>Tracking <span id="trackingStatus">OFF</span></p>
     <div class="container">
         <h1>Break That Habit 🚀</h1>
         <p id="website">Current Site: <span class="highlight">Loading...</span></p>
