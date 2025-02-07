@@ -1,23 +1,15 @@
 {
-    "name": "breakthatstupidhabit",
-    "description": "Boilerplate Extension",
-    "version": "1.0",
-    "manifest_version": 3,
-    "action": {
-      "default_popup": "hello.html",
-      "default_icon": "hello_extension.png"
-    },
-    "background": {
-      "service_worker": "background.js"
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
-      }
-    ],
-    "permissions": [
-      "storage",
-      "activeTab"
-    ]
+  "manifest_version": 3,
+  "name": "breakthatstupidhabit",
+  "version": "1.0",
+  "description": "Tracks if you're on a productive or distracting website.",
+  "permissions": ["activeTab", "storage", "scripting","notifications"],
+  "background": {
+    "service_worker": "websiteclassify.js"
+  },
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "hello_extension.png"
+  }
 }
