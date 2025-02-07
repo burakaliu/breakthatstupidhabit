@@ -116,3 +116,27 @@ input:checked + .slider:before {
 .btn:hover {
     background: #e64a19;
 }
+#contribution-graph {
+    display: grid;
+    grid-template-columns: repeat(53, 15px); /* 53 weeks for extra day in the year*/
+    gap: 2px;
+    width: 1000px;
+    padding: 10px;
+}
+
+.day {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    background-color: #E0E0E0; /* low productivity color */
+    transition: 0.2s;
+}
+/*other productivity colors*/
+.day[data-level="1"] { background-color: #ACD5F2; } 
+.day[data-level="2"] { background-color: #7FA8D4; }
+.day[data-level="3"] { background-color: #527BA0; }
+.day[data-level="4"] { background-color: #254E77; }
+
+.day:hover {
+    outline: 1px solid black;
+}
