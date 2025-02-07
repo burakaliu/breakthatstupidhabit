@@ -88,8 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 });
-
-  const container = document.getElementById("contribution-graph");
+const container = document.getElementById("contribution-graph");
 
     const today = new Date();
     const startDate = new Date();
@@ -120,4 +119,3 @@ document.addEventListener("DOMContentLoaded", function () {
 
         container.appendChild(dayElement);
     });
-});
