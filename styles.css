@@ -1,7 +1,8 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    width: 220px;
+    width: 1000px;
+    min-width: 500px;
     padding: 10px;
 }
 
@@ -49,5 +50,3 @@ p {
     transition: 0.4s;
     border-radius: 50%;
 }
-
-input:check
