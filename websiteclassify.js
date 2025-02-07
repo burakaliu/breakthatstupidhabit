@@ -22,7 +22,7 @@ const distractionSites = [
 ];
 
 const productiveSites = [
-    "khanacademy.org", "wikipedia.org", "coursera.org", "edx.org", "quizlet.com",
+    "khanacademy.org", "mail.google.com", "wikipedia.org", "coursera.org", "edx.org", "quizlet.com",
     "csw.schoology.com", "drive.google.com", "docs.google.com", "sheets.google.com",
     "classroom.google.com", "calendar.google.com", "notion.so", "evernote.com",
     "slack.com", "zoom.us", "stackexchange.com", "stackoverflow.com", "github.com",
