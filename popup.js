@@ -57,27 +57,34 @@ function displayWebsiteData() {
   });
 }
 document.addEventListener("DOMContentLoaded", function () {
-    displayWebsiteData();
-  chrome.storage.local.get(["currentSite", "status", "trackingEnabled"], function (data) {
-      document.getElementById("website").textContent = data.currentSite || "Unknown";
-      document.getElementById("status").textContent = data.status || "Neutral";
+  chrome.storage.local.get(["currentSite", "status", "trackingEnabled", "timeLog"], function (data) {
+      document.getElementById("website").innerHTML = `Current Site: <span class="highlight">${data.currentSite || "Unknown"}</span>`;
+      document.getElementById("status").innerHTML = `<span class="highlight">${data.status || "Neutral"}</span>`;
 
       const toggle = document.getElementById("toggleTracking");
       const trackingStatus = document.getElementById("trackingStatus");
 
-      // Set switch state based on stored value
-      if (data.trackingEnabled === false) {
-          toggle.checked = false;
-          trackingStatus.textContent = "OFF";
-      } else {
-          toggle.checked = true;
-          trackingStatus.textContent = "ON";
-      }
+      toggle.checked = data.trackingEnabled !== false;
+      trackingStatus.textContent = toggle.checked ? "ON" : "OFF";
 
       toggle.addEventListener("change", function () {
-          const enabled = toggle.checked;
-          chrome.storage.local.set({ trackingEnabled: enabled });
-          trackingStatus.textContent = enabled ? "ON" : "OFF";
+          chrome.storage.local.set({ trackingEnabled: toggle.checked });
+          trackingStatus.textContent = toggle.checked ? "ON" : "OFF";
+      });
+
+      // Update time log display
+      const timeLog = data.timeLog || { productive: 0, distracting: 0, neutral: 0 };
+      document.getElementById("productiveTime").textContent = (timeLog.productive / 60).toFixed(1);
+      document.getElementById("distractingTime").textContent = (timeLog.distracting / 60).toFixed(1);
+      document.getElementById("neutralTime").textContent = (timeLog.neutral / 60).toFixed(1);
+  });
+
+  // Reset button functionality
+  document.getElementById("resetLog").addEventListener("click", function () {
+      chrome.storage.local.set({ timeLog: { productive: 0, distracting: 0, neutral: 0 } }, function () {
+          document.getElementById("productiveTime").textContent = "0";
+          document.getElementById("distractingTime").textContent = "0";
+          document.getElementById("neutralTime").textContent = "0";
       });
   });
 });
