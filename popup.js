@@ -146,7 +146,7 @@ const container = document.getElementById("contribution-graph");
         dayElement.classList.add("day");
 
         const dateString = date.toISOString().split("T")[0];
-        const level = productivityData[dateString] || 0;
+        const level = productivityData[dateString] || con0;
         dayElement.setAttribute("data-level", level);
 
         dayElement.title = `${dateString}: productivity level ${level} `; // tooltip
