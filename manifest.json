@@ -8,7 +8,7 @@
     "default_icon": "hello_extension.png"
   },
   "background": {
-    "service_worker": "websiteclassify.js"
+    "service_worker": "background.js"
   },
   "permissions": [
     "activeTab",
@@ -16,6 +16,7 @@
     "scripting",
     "notifications"
   ],
+  "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
