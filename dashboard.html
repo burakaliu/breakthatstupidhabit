@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Break That Stupid Habit</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="menu.js"></script>
+</head>
+<body>
+    <div class="menu-icon" id="menuIcon">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+    <nav class="side-menu">
+        <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="statistics.html">Statistics</a></li>
+            <li><a href="Settings.html">Settings</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Productivity Dashboard 📊</h1>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Today's Progress</h3>
+                <div id="todayStats">
+                    <p>Productive: <span id="todayProductive">0</span> min</p>
+                    <p>Distracting: <span id="todayDistracting">0</span> min</p>
+                    <p>Neutral: <span id="todayNeutral">0</span> min</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Weekly Overview</h3>
+                <div id="weeklyChart">
+                    <!-- Weekly chart will be rendered here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="productivity-heatmap">
+            <h3>Yearly Activity</h3>
+            <div id="contribution-graph"></div>
+        </div>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>
