@@ -132,7 +132,7 @@ const container = document.getElementById("contribution-graph");
     for (let d = new Date(startDate); d <= today; d.setDate(d.getDate() + 1)) {
         dates.push(new Date(d)); // adds dates to array
     }
-
+    
     // generate heatmap
     dates.forEach(date => {
         const dayElement = document.createElement("div");
