@@ -118,7 +118,7 @@ input:checked + .slider:before {
 }
 #contribution-graph {
     display: grid;
-    grid-template-columns: repeat(53, 15px); /* 53 weeks for extra day in the year*/
+    grid-template-columns: repeat(41, 15px); /* 53 weeks for extra day in the year*/
     gap: 2px;
     width: 1000px;
     padding: 10px;
@@ -140,3 +140,18 @@ input:checked + .slider:before {
 .day:hover {
     outline: 1px solid black;
 }
+
+.day {
+    width: 15px;
+    height: 15px;
+    margin: 2px;
+    display: inline-block;
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+[data-level="0"] { background: #e74c3c; }  /* Very distracting - Red */
+[data-level="1"] { background: #f39c12; }  /* Slightly distracting - Orange */
+[data-level="2"] { background: #f1c40f; }  /* Neutral - Yellow */
+[data-level="3"] { background: #2ecc71; }  /* Moderately productive - Light Green */
+[data-level="4"] { background: #27ae60; }  /* Very productive - Dark Green */
