@@ -133,13 +133,6 @@ const container = document.getElementById("contribution-graph");
         dates.push(new Date(d)); // adds dates to array
     }
 
-    // fake data
-    const productivityData = {};
-    dates.forEach(date => {
-        const dateString = date.toISOString().split("T")[0];
-        productivityData[dateString] = Math.floor(Math.random() * 5); 
-    });
-
     // generate heatmap
     dates.forEach(date => {
         const dayElement = document.createElement("div");
