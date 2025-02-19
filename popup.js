@@ -132,19 +132,45 @@ const container = document.getElementById("contribution-graph");
     for (let d = new Date(startDate); d <= today; d.setDate(d.getDate() + 1)) {
         dates.push(new Date(d)); // adds dates to array
     }
-    
+
     // generate heatmap
     dates.forEach(date => {
         const dayElement = document.createElement("div");
         dayElement.classList.add("day");
 
         const dateString = date.toISOString().split("T")[0];
-        const level = productivityData[dateString] || 0;
+        const level = productivityData[dateString] || con0;
         dayElement.setAttribute("data-level", level);
 
         dayElement.title = `${dateString}: productivity level ${level} `; // tooltip
 
-        if (container) {
-            container.appendChild(dayElement);
-        }
+        container.appendChild(dayElement);
     });
+
+// Function to determine productivity score (0-4 scale)
+function calculateProductivityLevel(dayLog) {
+  if (!dayLog) return 0; // Default to 0 if no data
+
+  const { productive, distracting } = dayLog;
+  const totalTime = productive + distracting;
+
+  if (totalTime === 0) return 0; // No activity recorded
+
+  const productivityRatio = productive / totalTime;
+  if (productivityRatio >= 0.8) return 4; // Very productive
+  if (productivityRatio >= 0.6) return 3; // Moderately productive
+  if (productivityRatio >= 0.4) return 2; // Neutral
+  if (productivityRatio >= 0.2) return 1; // Slightly distracting
+  return 0; // Very distracting
+}
+// Function to determine box color based on productivity level
+function getColorForLevel(level) {
+    switch (level) {
+        case 1: return "#d6e685"; // Light green (low productivity)
+        case 2: return "#8cc665"; // Medium-light green
+        case 3: return "#44a340"; // Medium green
+        case 4: return "#1e6823"; // Dark green (high productivity)
+        case 5: return "#004d00"; // Very dark green (max productivity)
+        default: return "#ffffff"; // White for no data
+    }
+}
