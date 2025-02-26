@@ -1,42 +1,47 @@
 let activeTabId = null;
 let activeTabData = null;
 let lastActiveTime = Date.now();
+let trackingInterval = null;
 const IDLE_TIMEOUT = 60; // seconds
+const UPDATE_INTERVAL = 5; // seconds - how often to update storage
 
 // Initialize tracking data for new day
 function initializeDayData() {
-  //idk tbh
   const today = new Date().toISOString().split('T')[0];
 
-  // Check wewther data exists for today, if not, initialize it
+  // Check whether data exists for today, if not, initialize it
   chrome.storage.local.get(['timeTrackingData'], (result) => {
-    if (!result.timeTrackingData) {
-      chrome.storage.local.set({ timeTrackingData: { [today]: {} } });
-    } else if (!result.timeTrackingData[today]) {
-      result.timeTrackingData[today] = {};
-      chrome.storage.local.set({ timeTrackingData: result.timeTrackingData });
+    let trackingData = result.timeTrackingData || {};
+    if (!trackingData[today]) {
+      trackingData[today] = {};
+      chrome.storage.local.set({ timeTrackingData: trackingData });
     }
   });
 }
 
 // Update time spent on a domain
 async function updateTimeSpent(domain, timeSpent) {
+  if (!domain || timeSpent <= 0) return;
+  
   const today = new Date().toISOString().split('T')[0];
   
   try {
     const result = await chrome.storage.local.get(['timeTrackingData']);
-    const trackingData = result.timeTrackingData || { [today]: {} };
+    let trackingData = result.timeTrackingData || {};
     if (!trackingData[today]) trackingData[today] = {};
+    
     trackingData[today][domain] = (trackingData[today][domain] || 0) + timeSpent;
     await chrome.storage.local.set({ timeTrackingData: trackingData });
+    console.log(`Updated ${domain}: +${timeSpent}s, Total: ${trackingData[today][domain]}s`);
   } catch (error) {
     console.error('Error updating time spent:', error);
   }
 }
 
-// helper function to extract domain from URL
+// Helper function to extract domain from URL
 function extractDomain(url) {
   try {
+    if (!url || !url.startsWith('http')) return null;
     const urlObj = new URL(url);
     return urlObj.hostname;
   } catch {
@@ -44,7 +49,42 @@ function extractDomain(url) {
   }
 }
 
-// Fringe cases
+// Update current active tab time
+async function updateActiveTabTime() {
+  const now = Date.now();
+  
+  if (activeTabData && activeTabId) {
+    const timeSpent = Math.floor((now - lastActiveTime) / 1000);
+    if (timeSpent > 0) {
+      await updateTimeSpent(activeTabData.domain, timeSpent);
+      lastActiveTime = now; // Reset timer after updating
+    }
+  }
+}
+
+// Start interval-based tracking
+function startTracking() {
+  if (trackingInterval) {
+    clearInterval(trackingInterval);
+  }
+  
+  trackingInterval = setInterval(async () => {
+    await updateActiveTabTime();
+  }, UPDATE_INTERVAL * 1000);
+}
+
+// Stop interval-based tracking
+function stopTracking() {
+  if (trackingInterval) {
+    clearInterval(trackingInterval);
+    trackingInterval = null;
+  }
+  
+  // Final update before stopping
+  if (activeTabData) {
+    updateActiveTabTime();
+  }
+}
 
 // Handle tab updates
 function handleTabUpdate(tabId, changeInfo, tab) {
@@ -60,24 +100,21 @@ function handleTabActivated(activeInfo) {
 
 // Handle active tab change
 async function handleActiveTabChange(tabId) {
-  const now = Date.now();
-  
-  // Update time for previous active tab
-  if (activeTabData && activeTabId) {
-    const timeSpent = Math.floor((now - lastActiveTime) / 1000);
-    if (timeSpent > 0) {
-      await updateTimeSpent(activeTabData.domain, timeSpent);
-    }
-  }
+  // Update time for previous active tab before switching
+  await updateActiveTabTime();
   
   // Update active tab info
   try {
     const tab = await chrome.tabs.get(tabId);
     const domain = extractDomain(tab.url);
+    
     if (domain) {
       activeTabId = tabId;
       activeTabData = { domain };
-      lastActiveTime = now;
+      lastActiveTime = Date.now();
+    } else {
+      activeTabId = null;
+      activeTabData = null;
     }
   } catch (error) {
     console.error('Error getting tab info:', error);
@@ -87,46 +124,51 @@ async function handleActiveTabChange(tabId) {
 }
 
 // Handle window focus change
-chrome.windows.onFocusChanged.addListener((windowId) => {
+chrome.windows.onFocusChanged.addListener(async (windowId) => {
   if (windowId === chrome.windows.WINDOW_ID_NONE) {
-    // Browser lost focus, update time for active tab
-    if (activeTabData) {
-      const timeSpent = Math.floor((Date.now() - lastActiveTime) / 1000);
-      if (timeSpent > 0) {
-        updateTimeSpent(activeTabData.domain, timeSpent);
-      }
-    }
+    // Browser lost focus, update time and stop tracking
+    await updateActiveTabTime();
+    stopTracking();
     activeTabId = null;
     activeTabData = null;
   } else {
-    // Browser gained focus, get active tab
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    // Browser gained focus, get active tab and start tracking
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       if (tabs[0]) {
-        handleActiveTabChange(tabs[0].id);
+        await handleActiveTabChange(tabs[0].id);
+        startTracking();
       }
     });
   }
 });
 
 // Handle idle state changes
-chrome.idle.onStateChanged.addListener((state) => {
+chrome.idle.onStateChanged.addListener(async (state) => {
   if (state === 'active') {
     // User became active, reset tracking
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       if (tabs[0]) {
-        handleActiveTabChange(tabs[0].id);
+        await handleActiveTabChange(tabs[0].id);
+        startTracking();
       }
     });
   } else {
-    // User is idle/locked, update time for active tab
-    if (activeTabData) {
-      const timeSpent = Math.floor((Date.now() - lastActiveTime) / 1000);
-      if (timeSpent > 0) {
-        updateTimeSpent(activeTabData.domain, timeSpent);
-      }
-    }
+    // User is idle/locked, update time and stop tracking
+    await updateActiveTabTime();
+    stopTracking();
     activeTabId = null;
     activeTabData = null;
+  }
+});
+
+// Handle tab navigation
+chrome.webNavigation.onCompleted.addListener((details) => {
+  if (details.frameId === 0) { // Main frame only
+    chrome.tabs.get(details.tabId, (tab) => {
+      if (tab.active) {
+        handleActiveTabChange(tab.id);
+      }
+    });
   }
 });
 
@@ -139,3 +181,11 @@ chrome.idle.setDetectionInterval(IDLE_TIMEOUT);
 
 // Initialize data for today when extension loads
 initializeDayData();
+
+// Start tracking on extension load
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  if (tabs[0]) {
+    handleActiveTabChange(tabs[0].id);
+    startTracking();
+  }
+});

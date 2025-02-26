@@ -1,9 +1,10 @@
 body {
-  width: 300px;
+  width: 400px;
   margin: 0;
-  padding: 16px;
+  padding: 20px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  color: #333;
+  color: #fff;
+  background: #1a1b1e;
 }
 
 .container {
@@ -14,20 +15,21 @@ body {
 
 h1 {
   font-size: 20px;
-  margin: 0 0 16px 0;
-  color: #1a73e8;
+  margin: 0 0 20px 0;
+  color: #fff;
 }
 
 h2 {
   font-size: 16px;
-  margin: 0 0 12px 0;
-  color: #5f6368;
+  margin: 0 0 16px 0;
+  color: #a6a7ab;
 }
 
 .section {
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 16px;
+  background: #25262b;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
 .stats-container {
@@ -40,32 +42,35 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
-  margin: 5px;
-  background: white;
-  border-radius: 4px;
-  border: 1px solid #e8eaed;
+  padding: 12px;
+  margin: 8px 0;
+  background: #2c2d31;
+  border-radius: 8px;
+  border: 1px solid #3a3b3f;
 }
 
 .domain {
   font-size: 14px;
-  color: #202124;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .time {
   font-size: 14px;
-  color: #1a73e8;
+  color: #635dff;
   font-weight: 500;
 }
 .total-time {
-  background: #e8f0fe;
-  border: 2px solid #1a73e8;
+  background: #2c2d31;
+  border: 2px solid #635dff;
   margin-bottom: 20px;
 }
 
 .total-time .domain {
   font-weight: 600;
-  color: #1a73e8;
+  color: #635dff;
 }
 
 .total-time .time {

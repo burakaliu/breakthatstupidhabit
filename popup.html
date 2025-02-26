@@ -9,13 +9,26 @@
 <body>
     <div class="container">
         <h1>Break That Habit 🚀</h1>
-        
+        <div class="section">
+            <h2>Today's Focus</h2>
+            <div class="stats-container">
+                <div class="stat-item total-time">
+                    <span class="domain">⏰ Total Time</span>
+                    <span class="time">8h 0m</span>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Websites Used Today</h2>
+            <div class="stats-container" id="websites-container"></div>
+        </div>
+        <div class="section">
+            <h2>Weekly Screen Time</h2>
+            <div style="height: 300px;">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
     </div>
-    <div>
-        <canvas id="myChart"></canvas>
-      </div>
     <script type="module" src="popup.js"></script>
-
-      
 </body>
 </html>

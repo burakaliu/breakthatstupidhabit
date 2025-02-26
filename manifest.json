@@ -17,7 +17,8 @@
     "notifications",
     "alarms",
     "tabs",
-    "idle"
+    "idle",
+    "webNavigation"
   ],
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
