@@ -1,6 +1,6 @@
 {
-  "name": "test",
-  "description": "Boilerplate Extension",
+  "name": "Break That Habit - Time Tracker",
+  "description": "Track and analyze your online time usage to build better browsing habits",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
@@ -14,7 +14,10 @@
     "activeTab",
     "storage",
     "scripting",
-    "notifications"
+    "notifications",
+    "alarms",
+    "tabs",
+    "idle"
   ],
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
