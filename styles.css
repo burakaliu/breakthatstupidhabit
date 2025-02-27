@@ -179,12 +179,95 @@ h2 {
 
 .website-item {
   display: flex;
-  justify-content: space-between;
-  padding: 0.75rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
   background: #333;
   border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.website-item:hover {
+  background: #3a3a3a;
+}
+
+.website-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.website-info .domain {
+  font-weight: 500;
+}
+
+.website-info .time {
+  color: #999;
+  margin: 0 1rem;
+}
+
+.edit-button {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #635dff;
+  border-radius: 4px;
+  background: transparent;
+  color: #635dff;
+  cursor: pointer;
   font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.edit-button:hover {
+  background: #635dff;
   color: #fff;
+}
+
+.add-website-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.website-select,
+.website-input {
+  padding: 0.5rem;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #2d2d2d;
+  color: #fff;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.website-select:focus,
+.website-input:focus,
+.limit-input:focus {
+  outline: none;
+  border-color: #635dff;
+}
+
+.or-divider {
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+}
+
+.add-website-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #635dff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  width: 100%;
+  transition: background 0.2s ease;
+}
+
+.add-website-btn:hover {
+  background: #524dcc;
 }
 
 .website-item .time {

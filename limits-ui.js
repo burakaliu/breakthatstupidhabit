@@ -14,6 +14,10 @@ function formatTime(seconds) {
 // Initialize the limits page
 async function initLimitsPage() {
   const websitesContainer = document.getElementById('websites-container');
+  const websiteSelect = document.getElementById('website-select');
+  const websiteInput = document.getElementById('website-input');
+  const newLimitInput = document.getElementById('new-limit-input');
+  const addWebsiteBtn = document.getElementById('add-website-btn');
   const today = new Date().toISOString().split('T')[0];
 
   try {
@@ -29,22 +33,32 @@ async function initLimitsPage() {
     const totalSeconds = Object.values(todayData).reduce((sum, time) => sum + time, 0);
     document.querySelector('.total-time .time').textContent = formatTime(totalSeconds);
 
+    // Populate website select dropdown
+    websiteSelect.innerHTML = '<option value="">Select a visited website...</option>';
+    Object.keys(todayData).forEach(domain => {
+      if (!(domain in limits)) {
+        const option = document.createElement('option');
+        option.value = domain;
+        option.textContent = domain;
+        websiteSelect.appendChild(option);
+      }
+    });
+
     // Create website list items
     websitesContainer.innerHTML = '';
-    for (const [domain, timeSpent] of Object.entries(todayData)) {
+    for (const [domain, limitInMinutes] of Object.entries(limits)) {
+      const timeSpent = todayData[domain] || 0;
       const websiteItem = document.createElement('div');
       websiteItem.className = 'website-item';
-
-      const limitInMinutes = limits[domain] || 0;
       const isExceeded = timeSpent >= limitInMinutes * 60 && limitInMinutes > 0;
 
-      // Writing html in js is stupid but idk how else to do this
       websiteItem.innerHTML = `
         <div class="website-info">
           <span class="domain">${domain}</span>
           <span class="time">${formatTime(timeSpent)}</span>
+          <button class="edit-button">Edit</button>
         </div>
-        <div class="limit-controls">
+        <div class="limit-controls" style="display: none;">
           <input type="number" 
                  value="${limitInMinutes}" 
                  min="0" 
@@ -56,21 +70,43 @@ async function initLimitsPage() {
         </div>
       `;
 
-      // Add event listeners for limit controls
+      // Add event listeners for edit controls
+      const editButton = websiteItem.querySelector('.edit-button');
+      const limitControls = websiteItem.querySelector('.limit-controls');
       const input = websiteItem.querySelector('.limit-input');
       const saveButton = websiteItem.querySelector('.save-limit');
+
+      editButton.addEventListener('click', () => {
+        limitControls.style.display = 'flex';
+        editButton.style.display = 'none';
+      });
 
       saveButton.addEventListener('click', async () => {
         const minutes = parseInt(input.value) || 0;
         if (minutes >= 0) {
           await setWebsiteLimit(domain, minutes);
-          // Refresh the page to show updated limits
+          limitControls.style.display = 'none';
+          editButton.style.display = 'inline';
           initLimitsPage();
         }
       });
 
       websitesContainer.appendChild(websiteItem);
     }
+
+    // Add event listener for adding new website limit
+    addWebsiteBtn.addEventListener('click', async () => {
+      const domain = websiteSelect.value || websiteInput.value;
+      const minutes = parseInt(newLimitInput.value) || 0;
+
+      if (domain && minutes >= 0) {
+        await setWebsiteLimit(domain, minutes);
+        websiteSelect.value = '';
+        websiteInput.value = '';
+        newLimitInput.value = '';
+        initLimitsPage();
+      }
+    });
 
     // Update focus score based on limits compliance
     updateFocusScore(todayData, limits);
