@@ -8,7 +8,8 @@
     "default_icon": "hello_extension.png"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "permissions": [
     "activeTab",

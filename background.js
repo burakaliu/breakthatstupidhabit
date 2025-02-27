@@ -5,6 +5,9 @@ let trackingInterval = null;
 const IDLE_TIMEOUT = 60; // seconds
 const UPDATE_INTERVAL = 5; // seconds - how often to update storage
 
+// Import website limiting functions
+import { checkWebsiteLimit } from './limits.js';
+
 // Initialize tracking data for new day
 function initializeDayData() {
   // Get today's date in ISO format same as in popup.js (so something like "2025-03-23")
@@ -112,6 +115,25 @@ async function handleActiveTabChange(tabId) {
     const domain = extractDomain(tab.url);
     
     if (domain) {
+      // Check if website limit is exceeded
+      const limitStatus = await checkWebsiteLimit(domain);
+      
+      if (limitStatus.isExceeded) {
+        // Show a notification  ( add styling to this later?)
+        chrome.notifications.create({
+          type: 'basic',
+          iconUrl: 'hello_extension.png',
+          title: 'Time Limit Reached',
+          message: `You've reached your time limit for ${domain}. Take a break!`
+        });
+        
+        // Redirect to the custom blocked page
+        chrome.tabs.update(tabId, { 
+          url: `blocked.html?domain=${encodeURIComponent(domain)}&from=${encodeURIComponent(tab.url)}` 
+        });
+        return;
+      }
+      
       activeTabId = tabId;
       activeTabData = { domain };
       lastActiveTime = Date.now();
