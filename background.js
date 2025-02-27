@@ -7,10 +7,12 @@ const UPDATE_INTERVAL = 5; // seconds - how often to update storage
 
 // Initialize tracking data for new day
 function initializeDayData() {
+  // Get today's date in ISO format same as in popup.js (so something like "2025-03-23")
   const today = new Date().toISOString().split('T')[0];
 
   // Check whether data exists for today, if not, initialize it
   chrome.storage.local.get(['timeTrackingData'], (result) => {
+    // If today's data doesn't exist, initialize it
     let trackingData = result.timeTrackingData || {};
     if (!trackingData[today]) {
       trackingData[today] = {};
@@ -19,7 +21,7 @@ function initializeDayData() {
   });
 }
 
-// Update time spent on a domain
+// Update time spent on a specific domain in storage
 async function updateTimeSpent(domain, timeSpent) {
   if (!domain || timeSpent <= 0) return;
   
@@ -57,7 +59,8 @@ async function updateActiveTabTime() {
     const timeSpent = Math.floor((now - lastActiveTime) / 1000);
     if (timeSpent > 0) {
       await updateTimeSpent(activeTabData.domain, timeSpent);
-      lastActiveTime = now; // Reset timer after updating
+      // Reset timer after updating
+      lastActiveTime = now; 
     }
   }
 }
@@ -171,6 +174,8 @@ chrome.webNavigation.onCompleted.addListener((details) => {
     });
   }
 });
+
+// STILL NEED TO ADD MORE EDGE CASES EX. IF SWITCHED OFF GOOGLE BUT STILL OPEN IN BACKGROUND
 
 // Event listeners 
 chrome.tabs.onUpdated.addListener(handleTabUpdate);
