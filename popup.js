@@ -27,7 +27,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Fill up websites used today
     const websitesContainer = document.getElementById("websites-container");
     websitesContainer.innerHTML = Object.entries(todayData)
-      .sort(([, a], [, b]) => b - a) // This part makes me want to kill myself don't ask me how it works
+      .filter(([, seconds]) => seconds >= 60) // This filters out entries less than 1 min
+      .sort(([, a], [, b]) => b - a) // This part makes me want to kill myself don't ask me how it works but it sorts the websites in descending order
       .map(([domain, seconds]) => {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
