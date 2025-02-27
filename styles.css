@@ -286,3 +286,24 @@ h2 {
   height: 200px;
   position: relative;
 }
+.delete-button {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #ff4444;
+  border-radius: 4px;
+  background: transparent;
+  color: #ff4444;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  margin-left: 0.5rem;
+}
+
+.delete-button:hover {
+  background: #ff4444;
+  color: #fff;
+}
+
+.delete-button:active {
+  background: #cc0000;
+  color: #fff;
+}
