@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Break That Stupid Habit - Settings</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="popup.html" class="nav-link">Dashboard</a>
+            <a href="limits.html" class="nav-link">Limits</a>
+            <a href="settings.html" class="nav-link active">Settings</a>
+        </div>
+        <h1>Settings</h1>
+        
+        <div class="main-row-container">
+            <div class="left-column">
+                <div class="section">
+                    <h2>Theme</h2>
+                    <div class="settings-control">
+                        <label class="settings-label">Dark Mode</label>
+                        <label class="switch">
+                            <input type="checkbox" id="theme-toggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Notifications</h2>
+                    <div class="settings-control">
+                        <label class="settings-label">Enable Notifications</label>
+                        <label class="switch">
+                            <input type="checkbox" id="notifications-toggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="settings-control">
+                        <label class="settings-label">Sound Alerts</label>
+                        <label class="switch">
+                            <input type="checkbox" id="sound-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="section">
+                    <h2>Data Management</h2>
+                    <div class="settings-actions">
+                        <button id="export-data" class="settings-button">Export Data</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="settings.js"></script>
+</body>
+</html>

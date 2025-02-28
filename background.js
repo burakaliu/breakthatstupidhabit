@@ -11,7 +11,7 @@ import { checkWebsiteLimit } from './limits.js';
 // Initialize tracking data for new day
 function initializeDayData() {
   // Get today's date in ISO format same as in popup.js (so something like "2025-03-23")
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toLocaleDateString();
 
   // Check whether data exists for today, if not, initialize it
   chrome.storage.local.get(['timeTrackingData'], (result) => {
@@ -28,7 +28,7 @@ function initializeDayData() {
 async function updateTimeSpent(domain, timeSpent) {
   if (!domain || timeSpent <= 0) return;
   
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toLocaleDateString();
   
   try {
     const result = await chrome.storage.local.get(['timeTrackingData']);

@@ -18,7 +18,7 @@ async function initLimitsPage() {
   const websiteInput = document.getElementById('website-input');
   const newLimitInput = document.getElementById('new-limit-input');
   const addWebsiteBtn = document.getElementById('add-website-btn');
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toLocaleDateString();
 
   try {
     // Get both tracking data and limits

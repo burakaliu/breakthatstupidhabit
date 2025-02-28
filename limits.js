@@ -31,7 +31,7 @@ async function checkWebsiteLimit(domain) {
       chrome.storage.local.get(['timeTrackingData'])
     ]);
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString();
     const timeSpent = trackingData.timeTrackingData?.[today]?.[domain] || 0;
     const limitInSeconds = (limits[domain] || 0) * 60;
 
