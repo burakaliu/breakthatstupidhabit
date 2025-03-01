@@ -8,6 +8,14 @@ const UPDATE_INTERVAL = 5; // seconds - how often to update storage
 // Import website limiting functions
 import { checkWebsiteLimit } from './limits.js';
 
+// When closed update to prevent data loss
+chrome.runtime.onSuspend.addListener(() => {
+  updateActiveTabTime();
+});
+
+// Check for new day every minute to initialize new day's data if they're working past midnight
+setInterval(initializeDayData, 60 * 1000);
+
 // Initialize tracking data for new day
 function initializeDayData() {
   // Get today's date in ISO format same as in popup.js (so something like "2025-03-23")
@@ -25,22 +33,31 @@ function initializeDayData() {
 }
 
 // Update time spent on a specific domain in storage
+// Use a queue to prevent overlapping updates
+let storageQueue = Promise.resolve();
+
 async function updateTimeSpent(domain, timeSpent) {
   if (!domain || timeSpent <= 0) return;
   
   const today = new Date().toLocaleDateString();
   
-  try {
-    const result = await chrome.storage.local.get(['timeTrackingData']);
-    let trackingData = result.timeTrackingData || {};
-    if (!trackingData[today]) trackingData[today] = {};
-    
-    trackingData[today][domain] = (trackingData[today][domain] || 0) + timeSpent;
-    await chrome.storage.local.set({ timeTrackingData: trackingData });
-    console.log(`Updated ${domain}: +${timeSpent}s, Total: ${trackingData[today][domain]}s`);
-  } catch (error) {
-    console.error('Error updating time spent:', error);
-  }
+  await storageQueue;
+  storageQueue = (async () => {
+    try {
+      const result = await chrome.storage.local.get(['timeTrackingData']);
+      let trackingData = result.timeTrackingData || {};
+      if (!trackingData[today]) trackingData[today] = {};
+      
+      trackingData[today][domain] = (trackingData[today][domain] || 0) + timeSpent;
+      await chrome.storage.local.set({ timeTrackingData: trackingData });
+      console.log(`Updated ${domain}: +${timeSpent}s, Total: ${trackingData[today][domain]}s`);
+    } catch (error) {
+      console.error('Error updating time spent:', error);
+    }
+
+    await storageQueue;
+  })();
+  
 }
 
 // Helper function to extract domain from URL
@@ -193,6 +210,16 @@ chrome.webNavigation.onCompleted.addListener((details) => {
       if (tab.active) {
         handleActiveTabChange(tab.id);
       }
+    });
+  }
+});
+
+// If tab is closed update
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+  if (tabId === activeTabId) {
+    updateActiveTabTime().then(() => {
+      activeTabId = null;
+      activeTabData = null;
     });
   }
 });
