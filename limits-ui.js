@@ -2,7 +2,7 @@
 // There was error saying background js can't use imports or something and ai said this is solution
 
 // Import core limit management functions
-import { setWebsiteLimit, getWebsiteLimits } from './limits.js';
+import { setWebsiteLimit, getWebsiteLimits, removeWebsiteLimit } from './limits.js';
 
 // Format time for display (converts seconds to hours and minutes)
 function formatTime(seconds) {
@@ -18,7 +18,7 @@ async function initLimitsPage() {
   const websiteInput = document.getElementById('website-input');
   const newLimitInput = document.getElementById('new-limit-input');
   const addWebsiteBtn = document.getElementById('add-website-btn');
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toLocaleDateString();
 
   try {
     // Get both tracking data and limits
@@ -57,6 +57,7 @@ async function initLimitsPage() {
           <span class="domain">${domain}</span>
           <span class="time">${formatTime(timeSpent)}</span>
           <button class="edit-button">Edit</button>
+          <button class="delete-button">Delete</button>
         </div>
         <div class="limit-controls" style="display: none;">
           <input type="number" 
@@ -72,9 +73,15 @@ async function initLimitsPage() {
 
       // Add event listeners for edit controls
       const editButton = websiteItem.querySelector('.edit-button');
+      const deleteButton = websiteItem.querySelector('.delete-button');
       const limitControls = websiteItem.querySelector('.limit-controls');
       const input = websiteItem.querySelector('.limit-input');
       const saveButton = websiteItem.querySelector('.save-limit');
+
+      deleteButton.addEventListener('click', async () => {
+        await removeWebsiteLimit(domain);
+        initLimitsPage();
+      });
 
       editButton.addEventListener('click', () => {
         limitControls.style.display = 'flex';

@@ -1,4 +1,5 @@
 import Chart from "/node_modules/chart.js/auto/auto.mjs";
+import { updateTimeBreakdown } from './time-breakdown.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
   // Get today's date and conver it to something like "2025-06-17"
@@ -9,6 +10,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     const result = await chrome.storage.local.get(["timeTrackingData"]);
     const todayData = result.timeTrackingData?.[today] || {};
+
+    // Update time breakdown
+    updateTimeBreakdown(todayData);
 
     // Calculate today's total time
     const totalSeconds = Object.values(todayData).reduce(
