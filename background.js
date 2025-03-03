@@ -18,8 +18,8 @@ setInterval(initializeDayData, 60 * 1000);
 
 // Initialize tracking data for new day
 function initializeDayData() {
-  // Get today's date in ISO format same as in popup.js (so something like "2025-03-23")
-  const today = new Date().toLocaleDateString();
+  // Get today's date in ISO format (YYYY-MM-DD)
+  const today = new Date().toISOString().split('T')[0];
 
   // Check whether data exists for today, if not, initialize it
   chrome.storage.local.get(['timeTrackingData'], (result) => {
@@ -39,10 +39,9 @@ let storageQueue = Promise.resolve();
 async function updateTimeSpent(domain, timeSpent) {
   if (!domain || timeSpent <= 0) return;
   
-  const today = new Date().toLocaleDateString();
+  const today = new Date().toISOString().split('T')[0];
   
-  await storageQueue;
-  storageQueue = (async () => {
+  const currentOperation = (async () => {
     try {
       const result = await chrome.storage.local.get(['timeTrackingData']);
       let trackingData = result.timeTrackingData || {};
@@ -54,10 +53,10 @@ async function updateTimeSpent(domain, timeSpent) {
     } catch (error) {
       console.error('Error updating time spent:', error);
     }
-
-    await storageQueue;
   })();
-  
+
+  await Promise.all([storageQueue, currentOperation]);
+  storageQueue = currentOperation;
 }
 
 // Helper function to extract domain from URL
@@ -75,12 +74,22 @@ function extractDomain(url) {
 async function updateActiveTabTime() {
   const now = Date.now();
   
-  if (activeTabData && activeTabId) {
-    const timeSpent = Math.floor((now - lastActiveTime) / 1000);
-    if (timeSpent > 0) {
-      await updateTimeSpent(activeTabData.domain, timeSpent);
-      // Reset timer after updating
-      lastActiveTime = now; 
+  if (activeTabData && activeTabId && lastActiveTime) {
+    // Add additional checks for browser focus and idle state
+    const state = await chrome.idle.queryState(IDLE_TIMEOUT);
+    const windows = await chrome.windows.getAll();
+    const hasFocusedWindow = windows.some(window => window.focused);
+    
+    // Only update time if browser is active and not idle
+    if (state === 'active' && hasFocusedWindow) {
+      const timeSpent = Math.floor((now - lastActiveTime) / 1000);
+      if (timeSpent > 0) {
+        await updateTimeSpent(activeTabData.domain, timeSpent);
+        lastActiveTime = now; // Reset timer after updating
+      }
+    } else {
+      // Reset lastActiveTime if browser is idle or unfocused
+      lastActiveTime = now;
     }
   }
 }
@@ -173,33 +182,47 @@ chrome.windows.onFocusChanged.addListener(async (windowId) => {
     stopTracking();
     activeTabId = null;
     activeTabData = null;
+    lastActiveTime = null; // Reset lastActiveTime when window loses focus
   } else {
     // Browser gained focus, get active tab and start tracking
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-      if (tabs[0]) {
-        await handleActiveTabChange(tabs[0].id);
-        startTracking();
-      }
-    });
+    const windows = await chrome.windows.getAll();
+    const hasFocusedWindow = windows.some(window => window.focused);
+    
+    if (hasFocusedWindow) {
+      chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+        if (tabs[0]) {
+          await handleActiveTabChange(tabs[0].id);
+          startTracking();
+          lastActiveTime = Date.now(); // Set lastActiveTime when window gains focus
+        }
+      });
+    }
   }
 });
 
 // Handle idle state changes
 chrome.idle.onStateChanged.addListener(async (state) => {
   if (state === 'active') {
-    // User became active, reset tracking
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-      if (tabs[0]) {
-        await handleActiveTabChange(tabs[0].id);
-        startTracking();
-      }
-    });
+    // User became active, check window focus before resuming tracking
+    const windows = await chrome.windows.getAll();
+    const hasFocusedWindow = windows.some(window => window.focused);
+    
+    if (hasFocusedWindow) {
+      chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+        if (tabs[0]) {
+          await handleActiveTabChange(tabs[0].id);
+          startTracking();
+          lastActiveTime = Date.now(); // Set lastActiveTime when becoming active
+        }
+      });
+    }
   } else {
     // User is idle/locked, update time and stop tracking
     await updateActiveTabTime();
     stopTracking();
     activeTabId = null;
     activeTabData = null;
+    lastActiveTime = null; // Reset lastActiveTime during idle periods
   }
 });
 
