@@ -14,5 +14,31 @@ body {
   }
   
   .message {
+    width: 460px;
+    height: 65px;
+    border-radius: 15px;
     font-size: 1rem;
+    color: #fff;
+    background: #333;
+    margin: 0 auto;
+  }
+
+  .stats {
+    width: 160px;
+    height: 45px;
+    border-radius: 15px;
+    color: #fff;
+    background: #333;
+    margin: 0 auto;
+  }
+
+  .blocked-buttons {
+    background-color:#635dff;  
+    color: white;  
+    padding: 12px 24px;  
+    font-size: 16px; 
+    border: none;  
+    border-radius: 8px;
+    cursor: pointer;  
+    margin-top: 10px;
   }
