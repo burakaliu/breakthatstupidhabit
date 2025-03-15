@@ -15,7 +15,9 @@ function formatTime(seconds) {
 // Get current stats for the domain 
 async function updateStats() {
     try {
-        const today = new Date().toISOString().split('T')[0];
+        // Get today's date in local timezone format (YYYY-MM-DD)
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         
         const [trackingData, limits] = await Promise.all([
             chrome.storage.local.get(['timeTrackingData']),
@@ -44,7 +46,9 @@ document.getElementById('closeTab').addEventListener('click', () => {
 // Handle extend time button
 document.getElementById('extendTime').addEventListener('click', async () => {
     try {
-        const today = new Date().toISOString().split('T')[0];
+        // Get today's date in local timezone format (YYYY-MM-DD)
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         const result = await chrome.storage.local.get(['websiteLimits']);
         let limits = result.websiteLimits || {};
 

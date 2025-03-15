@@ -18,8 +18,9 @@ setInterval(initializeDayData, 60 * 1000);
 
 // Initialize tracking data for new day
 function initializeDayData() {
-  // Get today's date in ISO format (YYYY-MM-DD)
-  const today = new Date().toISOString().split('T')[0];
+  // Get today's date in local timezone format (YYYY-MM-DD)
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   // Check whether data exists for today, if not, initialize it
   chrome.storage.local.get(['timeTrackingData'], (result) => {
@@ -39,7 +40,9 @@ let storageQueue = Promise.resolve();
 async function updateTimeSpent(domain, timeSpent) {
   if (!domain || timeSpent <= 0) return;
   
-  const today = new Date().toISOString().split('T')[0];
+  // Get today's date in local timezone format (YYYY-MM-DD)
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   
   const currentOperation = (async () => {
     try {
@@ -73,12 +76,14 @@ function extractDomain(url) {
 // Update current active tab time
 async function updateActiveTabTime() {
   const now = Date.now();
+  console.log('[updateActiveTabTime] Called with activeTabData:', activeTabData, 'activeTabId:', activeTabId);
   
   if (activeTabData && activeTabId && lastActiveTime) {
     // Add additional checks for browser focus and idle state
     const state = await chrome.idle.queryState(IDLE_TIMEOUT);
     const windows = await chrome.windows.getAll();
     const hasFocusedWindow = windows.some(window => window.focused);
+    console.log('[updateActiveTabTime] State:', state, 'hasFocusedWindow:', hasFocusedWindow);
     
     // Only update time if browser is active and not idle
     if (state === 'active' && hasFocusedWindow) {
@@ -96,10 +101,13 @@ async function updateActiveTabTime() {
 
 // Start interval-based tracking
 function startTracking() {
+  console.log('[startTracking] Called');
   if (trackingInterval) {
+    console.log('[startTracking] Clearing existing interval');
     clearInterval(trackingInterval);
   }
   
+  console.log('[startTracking] Setting up new tracking interval with UPDATE_INTERVAL:', UPDATE_INTERVAL);
   trackingInterval = setInterval(async () => {
     await updateActiveTabTime();
   }, UPDATE_INTERVAL * 1000);
@@ -107,13 +115,16 @@ function startTracking() {
 
 // Stop interval-based tracking
 function stopTracking() {
+  console.log('[stopTracking] Called with trackingInterval:', trackingInterval ? 'active' : 'inactive');
   if (trackingInterval) {
     clearInterval(trackingInterval);
     trackingInterval = null;
+    console.log('[stopTracking] Cleared tracking interval');
   }
   
   // Final update before stopping
   if (activeTabData) {
+    console.log('[stopTracking] Performing final update for domain:', activeTabData.domain);
     updateActiveTabTime();
   }
 }
@@ -132,6 +143,7 @@ function handleTabActivated(activeInfo) {
 
 // Handle active tab change
 async function handleActiveTabChange(tabId) {
+  console.log('[handleActiveTabChange] Called with tabId:', tabId);
   // Update time for previous active tab before switching
   await updateActiveTabTime();
   
@@ -139,6 +151,7 @@ async function handleActiveTabChange(tabId) {
   try {
     const tab = await chrome.tabs.get(tabId);
     const domain = extractDomain(tab.url);
+    console.log('[handleActiveTabChange] Tab URL:', tab.url, 'Domain:', domain);
     
     if (domain) {
       // Check if website limit is exceeded
@@ -176,6 +189,7 @@ async function handleActiveTabChange(tabId) {
 
 // Handle window focus change
 chrome.windows.onFocusChanged.addListener(async (windowId) => {
+  console.log('[onFocusChanged] Window focus changed. WindowId:', windowId);
   if (windowId === chrome.windows.WINDOW_ID_NONE) {
     // Browser lost focus, update time and stop tracking
     await updateActiveTabTime();
@@ -202,6 +216,7 @@ chrome.windows.onFocusChanged.addListener(async (windowId) => {
 
 // Handle idle state changes
 chrome.idle.onStateChanged.addListener(async (state) => {
+  console.log('[onStateChanged] System state changed to:', state);
   if (state === 'active') {
     // User became active, check window focus before resuming tracking
     const windows = await chrome.windows.getAll();

@@ -18,7 +18,9 @@ async function initLimitsPage() {
   const websiteInput = document.getElementById('website-input');
   const newLimitInput = document.getElementById('new-limit-input');
   const addWebsiteBtn = document.getElementById('add-website-btn');
-  const today = new Date().toISOString().split('T')[0];
+  // Get today's date in local timezone format (YYYY-MM-DD)
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   try {
     // Get both tracking data and limits

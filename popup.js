@@ -2,9 +2,9 @@ import Chart from "/node_modules/chart.js/auto/auto.mjs";
 import { updateTimeBreakdown } from './time-breakdown.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Get today's date and conver it to something like "2025-06-17"
-  const today = new Date().toISOString().split("T")[0];
+  // Get today's date in local timezone format (YYYY-MM-DD)
   const todayDate = new Date();
+  const today = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
 
   // U7pdate Today's Focus Time
   try {
