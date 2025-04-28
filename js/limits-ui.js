@@ -33,7 +33,7 @@ async function initLimitsPage() {
 
     // Calculate total time
     const totalSeconds = Object.values(todayData).reduce((sum, time) => sum + time, 0);
-    document.querySelector('.total-time .time').textContent = formatTime(totalSeconds);
+    //document.querySelector('.total-time .time').textContent = formatTime(totalSeconds);
 
     // Populate website select dropdown
     websiteSelect.innerHTML = '<option value="">Select a visited website...</option>';

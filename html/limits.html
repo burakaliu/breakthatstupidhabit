@@ -17,37 +17,26 @@
         
         <div class="main-row-container">
             <div class="left-column">
-                <div class="section focus-section">
-                    <h2>Today's Total</h2>
-                    <div class="stats-container">
-                        <div class="stat-item total-time">
-                            <span class="time">0h 0m</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section score-section">
-                    <h2>Focus Score</h2>
-                    <div class="focus-score">100%</div>
-                </div>
-
                 <div class="section add-website-section">
                     <h2>Add Website Limit</h2>
                     <div class="add-website-controls">
+                        <h3>Website</h3>
                         <select id="website-select" class="website-select">
                             <option value="">Select a visited website...</option>
                         </select>
                         <div class="or-divider">or</div>
                         <input type="text" id="website-input" class="website-input" placeholder="Enter website URL...">
+                        <h3>Length</h3>
                         <input type="number" id="new-limit-input" class="limit-input" placeholder="Minutes" min="0">
                         <button id="add-website-btn" class="add-website-btn">Add Limit</button>
                     </div>
                 </div>
             </div>
 
-            <div class="right-column">
+            <div class="right-column limits-section">
                 <div class="section websites-section">
                     <h2>Website Limits</h2>
+                    
                     <div class="websites-list" id="websites-container"></div>
                 </div>
             </div>

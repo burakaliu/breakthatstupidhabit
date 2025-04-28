@@ -168,7 +168,7 @@ async function handleActiveTabChange(tabId) {
         
         // Redirect to the custom blocked page
         chrome.tabs.update(tabId, { 
-          url: `blocked.html?domain=${encodeURIComponent(domain)}&from=${encodeURIComponent(tab.url)}` 
+          url: `../html/blocked.html?domain=${encodeURIComponent(domain)}&from=${encodeURIComponent(tab.url)}` 
         });
         return;
       }
