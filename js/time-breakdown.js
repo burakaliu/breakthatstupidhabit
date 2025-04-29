@@ -24,18 +24,28 @@ export function formatTime(seconds) {
     return `${hours}h ${minutes}m`;
 }
 
+export function calculateFocusScore(productiveTime, unproductiveTime) {
+    const total = productiveTime + unproductiveTime;
+    if (total === 0) return 0;
+    return Math.round((productiveTime / total) * 100);
+}
+
 export function updateTimeBreakdown(todayData) {
     const { productiveTime, unproductiveTime } = calculateTimeBreakdown(todayData);
-    
     // Update the productive time display
     const productiveTimeElement = document.querySelector('.productive-time .time');
     if (productiveTimeElement) {
         productiveTimeElement.textContent = formatTime(productiveTime);
     }
-
     // Update the unproductive time display
     const unproductiveTimeElement = document.querySelector('.unproductive-time .time');
     if (unproductiveTimeElement) {
         unproductiveTimeElement.textContent = formatTime(unproductiveTime);
+    }
+    // Update the focus score display
+    const focusScore = calculateFocusScore(productiveTime, unproductiveTime);
+    const focusScoreElement = document.querySelector('.focus-score');
+    if (focusScoreElement) {
+        focusScoreElement.textContent = focusScore + '%';
     }
 }
